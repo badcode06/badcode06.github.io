@@ -1,0 +1,114 @@
+<!DOCTYPE html>                                                                 
+<head>                                                                          
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title> Spaceport - AR demo with Three.js</title>                                                
+    <!-- include three.js library -->                                           
+    <script type="module">
+        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.121.1/build/three.module.js';
+        import { DRACOLoader } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/loaders/DRACOLoader.js';
+    </script>
+    <!-- include jsartookit -->                                                 
+    <!-- include threex.artoolkit -->                         
+    <!-- threex.artookit is the three.js extension to easily handle artoolkit. -->
+     <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.0-alpha-rc2/aframe/build/aframe-ar-nft.js">
+</head> 
+
+
+<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
+<script>
+    let camera, scene, renderer;
+    var arToolkitSource, arToolkitContext;
+    function init(){
+            //scene
+            scene = new THREE.Scene();
+            //camera 
+            camera = new THREE.Camera();
+            //renderer
+            renderer = new THREE.WebGLRenderer( { antialias: true } );
+            renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+            renderer.setSize( 640, 480 );
+            renderer.domElement.style.position = 'absolute'
+            renderer.domElement.style.top = '0px'
+            renderer.domElement.style.left = '0px'
+            document.body.appendChild( renderer.domElement );  
+
+            //ar toolkit source
+            arToolkitSource = new THREEx.ArToolkitSource({
+                sourceType: 'webcam',
+                });
+              function onResize()                                                         
+            {
+                    arToolkitSource.onResize()                                              
+        arToolkitSource.copySizeTo(renderer.domElement)                         
+        if ( arToolkitContext.arController !== null )                           
+        {                                                                       
+            arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)    
+        }                                                                       
+    }                                                                           
+                                                                                
+    arToolkitSource.init(function onReady(){                                    
+        onResize()                                                              
+    });                                                                         
+                                                                                
+    // handle resize event                                                      
+    window.addEventListener('resize', function(){                               
+        onResize()                                                              
+    });
+
+                let geometry1 = new THREE.PlaneBufferGeometry(1,1, 4,4);
+    let loader = new THREE.TextureLoader();
+    // let texture = loader.load( 'images/earth.jpg', render );
+    let material1 = new THREE.MeshBasicMaterial( { color: 0x0000ff, opacity: 0.5
+    mesh1 = new THREE.Mesh( geometry1, material1 );
+    mesh1.rotation.x = -Math.PI/2;
+    markerRoot1.add( mesh1 );
+
+    function onProgress(xhr) { console.log( (xhr.loaded / xhr.total * 100) + '%
+    function onError(xhr) { console.log( 'An error happened' ); }
+
+    new THREE.MTLLoader()
+        .setPath( 'models/' )
+        .load( 'fish-2.mtl', function ( materials ) {
+            materials.preload();
+            new THREE.OBJLoader()
+                .setMaterials( materials )
+                .setPath( 'models/' )
+                .load( 'fish-2.obj', function ( group ) {
+                    mesh0 = group.children[0];
+                    mesh0.material.side = THREE.DoubleSide;
+                    mesh0.position.y = 0.25;
+                    mesh0.scale.set(0.25,0.25,0.25);
+                    markerRoot1.add(mesh0);
+                }, onProgress, onError );
+        });
+        
+        }
+
+function update()                                                               
+{                                                                               
+    // update artoolkit on every frame                                          
+    if ( arToolkitSource.ready !== false )                                      
+        arToolkitContext.update( arToolkitSource.domElement );                  
+}                                                                               
+                                                                                
+                                                                                
+function render()                                                               
+{                                                                               
+    renderer.render( scene, camera );                                           
+}                                                                               
+                                                                                
+                                                                                
+function animate()                                                              
+{                                                                               
+    requestAnimationFrame(animate);                                             
+    deltaTime = clock.getDelta();                                               
+    totalTime += deltaTime;                                                     
+    update();                                                                   
+    render();                                                                   
+}                                                                               
+                                                                                
+</script>                                                                       
+                                                                                
+</body>                                                                         
+</html>  
+
